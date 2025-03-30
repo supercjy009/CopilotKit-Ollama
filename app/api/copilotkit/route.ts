@@ -1,13 +1,13 @@
+import { OllamaAdapter } from '@/service/ollama-adapter';
 import {
   CopilotRuntime,
   OpenAIAdapter,
-  ExperimentalOllamaAdapter,
   copilotRuntimeNextJSAppRouterEndpoint,
 } from '@copilotkit/runtime';
 import { tavily } from '@tavily/core';
 import { NextRequest } from 'next/server';
 
-const serviceAdapter = new ExperimentalOllamaAdapter({model: "gemma2:latest"});
+const serviceAdapter = new OllamaAdapter({model: "qwq"});
 // const runtime = new CopilotRuntime({
 //   actions: () => {
 //     return [

@@ -26,8 +26,8 @@ export default function Home() {
         AssistantMessage={CustomAssistantMessage}
         labels={{
           title: "Data Assistant",
-          initial: "Hello, I'm here to help you understand your data. How can I help?",
-          placeholder: "Ask about sales, trends, or metrics...",
+          initial: "我来帮您理解数据, 有什么问题?",
+          placeholder: "询问有关数据的问题...",
         }}
       />
     </div>

@@ -1,8 +1,7 @@
-//@ts-nocheck
-import { TextMessage } from "../../../graphql/types/converted";
-import { randomId, randomUUID } from "@copilotkit/shared";
-import { Ollama } from "@langchain/community/llms/ollama";
+// import { TextMessage } from "../graphql/types/converted";
+import { Ollama } from "@langchain/ollama";
 import { CopilotRuntimeChatCompletionRequest, CopilotRuntimeChatCompletionResponse, CopilotServiceAdapter } from "@copilotkit/runtime";
+import { randomId, randomUUID } from "@/utils/random-id";
 
 const DEFAULT_MODEL = "llama3:latest";
 
@@ -10,7 +9,7 @@ interface OllamaAdapterOptions {
   model?: string;
 }
 
-export class ExperimentalOllamaAdapter implements CopilotServiceAdapter {
+export class OllamaAdapter implements CopilotServiceAdapter {
   private model: string;
 
   constructor(options?: OllamaAdapterOptions) {
@@ -29,8 +28,9 @@ export class ExperimentalOllamaAdapter implements CopilotServiceAdapter {
 
     const ollama = new Ollama({
       model: this.model,
+      baseUrl: process.env.OLLAMA_BASE_URL,
     });
-    const contents = (messages.filter((m) => m.isTextMessage()) as TextMessage[]).map(
+    const contents = (messages.filter((m) => m.isTextMessage()) as any[]).map(
       (m) => m.content,
     );
     const _stream = await ollama.stream(contents); // [TODO] role info is dropped...
