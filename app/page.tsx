@@ -6,7 +6,8 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { CustomAssistantMessage } from "../components/AssistantMessage";
 import { prompt } from "../lib/prompt";
-import { useCopilotReadable } from "@copilotkit/react-core";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
+import { DrawingDashboard } from "@/components/DrawingBoard";
 
 export default function Home() {
   useCopilotReadable({
@@ -18,7 +19,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <main className="w-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex-grow">
-        <Dashboard />
+        <DrawingDashboard />
       </main>
       <Footer />
       <CopilotSidebar
@@ -26,8 +27,8 @@ export default function Home() {
         AssistantMessage={CustomAssistantMessage}
         labels={{
           title: "Data Assistant",
-          initial: "我来帮您理解数据, 有什么问题?",
-          placeholder: "询问有关数据的问题...",
+          initial: "请描述您的问题?",
+          placeholder: "",
         }}
       />
     </div>

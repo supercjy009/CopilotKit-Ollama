@@ -1,53 +1,51 @@
 // import { TextMessage } from "../graphql/types/converted";
-import { Ollama } from "@langchain/ollama";
-import { CopilotRuntimeChatCompletionRequest, CopilotRuntimeChatCompletionResponse, CopilotServiceAdapter } from "@copilotkit/runtime";
+import { ChatOllamaInput } from "@langchain/ollama";
+import {
+  CopilotRuntimeChatCompletionRequest,
+  CopilotRuntimeChatCompletionResponse,
+  CopilotServiceAdapter,
+} from "@copilotkit/runtime";
 import { randomId, randomUUID } from "@/utils/random-id";
 
 const DEFAULT_MODEL = "llama3:latest";
 
-interface OllamaAdapterOptions {
-  model?: string;
-}
-
 export class OllamaAdapter implements CopilotServiceAdapter {
-  private model: string;
+  private options: ChatOllamaInput = {
+    model: DEFAULT_MODEL,
+    streaming: true,
+  };
 
-  constructor(options?: OllamaAdapterOptions) {
-    if (options?.model) {
-      this.model = options.model;
-    } else {
-      this.model = DEFAULT_MODEL;
-    }
+  constructor(options?: ChatOllamaInput) {
+    this.options = { ...this.options, ...options };
   }
 
   async process(
-    request: CopilotRuntimeChatCompletionRequest,
+    request: CopilotRuntimeChatCompletionRequest
   ): Promise<CopilotRuntimeChatCompletionResponse> {
-    const { messages, actions, eventSource } = request;
-    // const messages = this.transformMessages(forwardedProps.messages);
-
-    const ollama = new Ollama({
-      model: this.model,
-      baseUrl: process.env.OLLAMA_BASE_URL,
-    });
-    const contents = (messages.filter((m) => m.isTextMessage()) as any[]).map(
-      (m) => m.content,
-    );
-    const _stream = await ollama.stream(contents); // [TODO] role info is dropped...
-
+    const { messages, actions, eventSource, forwardedParameters } = request;
     eventSource.stream(async (eventStream$) => {
-      const currentMessageId = randomId();
-      eventStream$.sendTextMessageStart({ messageId: currentMessageId });
-      for await (const chunkText of _stream) {
-        eventStream$.sendTextMessageContent({
-          messageId: currentMessageId,
-          content: chunkText,
-        });
-      }
-      eventStream$.sendTextMessageEnd({ messageId: currentMessageId });
-      // we may need to add this later.. [nc]
-      // let calls = (await result.response).functionCalls();
+      console.log("66666666666666666666666");
+      // eventStream$.sendTextMessageStart({ messageId: "1" });
+      // eventStream$.sendTextMessageContent({
+      //   messageId: "1",
+      //   content: "hello world",
+      // });
+      // eventStream$.sendTextMessageEnd({ messageId: "1" });
+      const toolId = randomUUID();
+      eventStream$.sendActionExecutionStart({
+        actionExecutionId: toolId,
+        actionName: "sayHello",
+        parentMessageId: randomUUID(),
+      });
 
+      // eventStream$.sendActionExecutionArgs({
+      //   actionExecutionId: toolId,
+      //   args: JSON.stringify({ name: "CYY" }),
+      // });
+
+      eventStream$.sendActionExecutionEnd({
+        actionExecutionId: toolId,
+      });
       eventStream$.complete();
     });
     return {
